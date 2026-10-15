@@ -1,0 +1,17 @@
+# Matches QEMU's own .editorconfig for the file types in this repo.
+# See https://editorconfig.org
+
+root = true
+
+[*]
+end_of_line = lf
+insert_final_newline = true
+charset = utf-8
+
+[*.{c,h}]
+indent_style = space
+indent_size = 4
+
+[*.{sh,py}]
+indent_style = space
+indent_size = 4

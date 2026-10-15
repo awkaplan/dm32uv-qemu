@@ -1,0 +1,13 @@
+# Known checkpatch findings that stay, one per line: "<path>: <exact message>".
+# Keep a comment above each entry saying why.
+
+# The board model is under the PolyForm Noncommercial License 1.0.0, like the
+# dm32uv-re project it was written for (see LICENSE.md). QEMU accepts only GPL-
+# compatible licenses for code merged into QEMU itself, which this overlay is not.
+*: ERROR: Saw unacceptable licenses 'PolyForm-Noncommercial-1.0.0', valid choices for QEMU are:
+
+# Debug and test knobs read from environment variables (see docs/environment.md).
+# Lenient strtoul()/strtol() parsing is intended there: a malformed value falls
+# back to what the C library parses, as the documented knobs always have.
+*: ERROR: consider using qemu_strtoul in preference to strtoul
+*: ERROR: consider using qemu_strtol in preference to strtol

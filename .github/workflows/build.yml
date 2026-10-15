@@ -1,0 +1,62 @@
+# SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
+#
+# Install csky-qemu and this overlay into QEMU at the pinned commits, build with
+# QEMU's default warnings-as-errors, run the dm32 smoke test, the register-level
+# device tests, the SVD table tests and QEMU's style checker.
+name: build
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: dm32uv-qemu
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+              build-essential ninja-build pkg-config python3-venv perl \
+              libglib2.0-dev libpixman-1-dev libfdt-dev flex bison
+
+      - name: Fetch QEMU and csky-qemu at the tested commits
+        run: |
+          git init -q qemu
+          git -C qemu fetch -q --depth 1 https://gitlab.com/qemu-project/qemu.git \
+              "$(cat dm32uv-qemu/QEMU_COMMIT)"
+          git -C qemu checkout -q FETCH_HEAD
+          git init -q csky-qemu
+          git -C csky-qemu fetch -q --depth 1 https://github.com/awkaplan/csky-qemu.git \
+              "$(cat dm32uv-qemu/CSKY_QEMU_COMMIT)"
+          git -C csky-qemu checkout -q FETCH_HEAD
+
+      - name: Install the overlays
+        run: |
+          csky-qemu/install.sh qemu
+          dm32uv-qemu/install.sh qemu
+
+      - name: Configure and build
+        run: |
+          cd qemu
+          ./configure --target-list=cskyv2-softmmu --disable-docs
+          ninja -C build qemu-system-cskyv2
+
+      - name: Smoke test
+        run: dm32uv-qemu/tests/run-smoke.sh qemu/build/qemu-system-cskyv2
+
+      - name: Register-level device tests
+        run: dm32uv-qemu/tests/run-qtest.sh qemu/build/qemu-system-cskyv2
+
+      # The SVD lives in dm32uv-re, so CI tests the generator on its synthetic
+      # fixture and the register file on the committed header; the staleness
+      # check needs the SVD and runs where it is available.
+      - name: SVD table tests
+        run: dm32uv-qemu/tests/run-svd-tests.sh
+
+      - name: checkpatch
+        run: dm32uv-qemu/tests/checkpatch.sh qemu

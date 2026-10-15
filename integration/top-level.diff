@@ -1,0 +1,154 @@
+diff --git a/hw/display/Kconfig b/hw/display/Kconfig
+index 0000000..0000000 100644
+--- a/hw/display/Kconfig
++++ b/hw/display/Kconfig
+@@ -1,3 +1,6 @@
++config DM32_LCD
++    bool
++
+ config DDC
+     bool
+     depends on I2C
+diff --git a/hw/display/meson.build b/hw/display/meson.build
+index 0000000..0000000 100644
+--- a/hw/display/meson.build
++++ b/hw/display/meson.build
+@@ -1,5 +1,7 @@
+ hw_display_modules = {}
+
++system_ss.add(when: 'CONFIG_DM32_LCD', if_true: files('dm32_lcd.c'))
++
+ system_ss.add(when: 'CONFIG_DDC', if_true: files('i2c-ddc.c'))
+ system_ss.add(when: 'CONFIG_EDID', if_true: files('edid-generate.c', 'edid-region.c'))
+
+diff --git a/hw/gpio/Kconfig b/hw/gpio/Kconfig
+index 0000000..0000000 100644
+--- a/hw/gpio/Kconfig
++++ b/hw/gpio/Kconfig
+@@ -1,3 +1,6 @@
++config DM32_GPIO
++    bool
++
+ config PL061
+     bool
+
+diff --git a/hw/gpio/meson.build b/hw/gpio/meson.build
+index 0000000..0000000 100644
+--- a/hw/gpio/meson.build
++++ b/hw/gpio/meson.build
+@@ -1,3 +1,4 @@
++system_ss.add(when: 'CONFIG_DM32_GPIO', if_true: files('dm32_gpio.c'))
+ system_ss.add(when: 'CONFIG_GPIO_KEY', if_true: files('gpio_key.c'))
+ system_ss.add(when: 'CONFIG_GPIO_MPC8XXX', if_true: files('mpc8xxx.c'))
+ system_ss.add(when: 'CONFIG_GPIO_PWR', if_true: files('gpio_pwr.c'))
+diff --git a/hw/misc/Kconfig b/hw/misc/Kconfig
+index 0000000..0000000 100644
+--- a/hw/misc/Kconfig
++++ b/hw/misc/Kconfig
+@@ -1,3 +1,42 @@
++config DM32_ADC
++    bool
++
++config DM32_SSI
++    bool
++
++config DM32_SYSREG
++    bool
++
++config DM32_FD6818
++    bool
++
++config DM32_I2C
++    bool
++
++config DM32_DMRRAM
++    bool
++
++config DM32_DAC
++    bool
++
++config DM32_WDT
++    bool
++
++config DM32_PWM
++    bool
++
++config DM32_CACHE
++    bool
++
++config DM32_SPI_SLAVE
++    bool
++
++config DM32_RDA5807M
++    bool
++
++config DM32_CODEC
++    bool
++
+ config APPLESMC
+     bool
+     depends on ISA_BUS
+diff --git a/hw/misc/meson.build b/hw/misc/meson.build
+index 0000000..0000000 100644
+--- a/hw/misc/meson.build
++++ b/hw/misc/meson.build
+@@ -1,3 +1,17 @@
++system_ss.add(when: 'CONFIG_DM32_ADC', if_true: files('dm32_adc.c'))
++system_ss.add(when: 'CONFIG_DM32_SSI', if_true: files('dm32_ssi.c'))
++system_ss.add(when: 'CONFIG_DM32_SYSREG', if_true: files('dm32_sysreg.c'))
++system_ss.add(when: 'CONFIG_DM32_FD6818', if_true: files('dm32_fd6818.c'))
++system_ss.add(when: 'CONFIG_DM32_I2C', if_true: files('dm32_i2c.c', 'dm32_i2c_rtc.c'))
++system_ss.add(when: 'CONFIG_DM32_DMRRAM', if_true: files('dm32_dmrram.c'))
++system_ss.add(when: 'CONFIG_DM32_DAC', if_true: files('dm32_dac.c'))
++system_ss.add(when: 'CONFIG_DM32_WDT', if_true: files('dm32_wdt.c'))
++system_ss.add(when: 'CONFIG_DM32_PWM', if_true: files('dm32_pwm.c'))
++system_ss.add(when: 'CONFIG_DM32_CACHE', if_true: files('dm32_cache.c'))
++system_ss.add(when: 'CONFIG_DM32_SPI_SLAVE', if_true: files('dm32_spi_slave.c'))
++system_ss.add(when: 'CONFIG_DM32_RDA5807M', if_true: files('dm32_rda5807m.c'))
++system_ss.add(when: 'CONFIG_DM32_CODEC', if_true: files('dm32_codec.c'))
++
+ system_ss.add(when: 'CONFIG_APPLESMC', if_true: files('applesmc.c'))
+
+ system_ss.add(when: 'CONFIG_EDU', if_true: files('edu.c'))
+diff --git a/hw/timer/Kconfig b/hw/timer/Kconfig
+index 0000000..0000000 100644
+--- a/hw/timer/Kconfig
++++ b/hw/timer/Kconfig
+@@ -1,3 +1,7 @@
++config DM32_TIMER
++    bool
++    select PTIMER
++
+ config ARM_TIMER
+     bool
+     select PTIMER
+diff --git a/hw/timer/meson.build b/hw/timer/meson.build
+index 0000000..0000000 100644
+--- a/hw/timer/meson.build
++++ b/hw/timer/meson.build
+@@ -1,3 +1,4 @@
++system_ss.add(when: 'CONFIG_DM32_TIMER', if_true: files('dm32_timer.c'))
+ system_ss.add(when: 'CONFIG_A9_GTIMER', if_true: files('a9gtimer.c'))
+ system_ss.add(when: 'CONFIG_ALLWINNER_A10_PIT', if_true: files('allwinner-a10-pit.c'))
+ system_ss.add(when: 'CONFIG_ARM_MPTIMER', if_true: files('arm_mptimer.c'))
+diff --git a/hw/intc/Kconfig b/hw/intc/Kconfig
+index 0000000..0000000 100644
+--- a/hw/intc/Kconfig
++++ b/hw/intc/Kconfig
+@@ -1,3 +1,6 @@
++config DM32_PIC
++    bool
++
+ config HEATHROW_PIC
+     bool
+
+diff --git a/hw/intc/meson.build b/hw/intc/meson.build
+index 0000000..0000000 100644
+--- a/hw/intc/meson.build
++++ b/hw/intc/meson.build
+@@ -1,4 +1,5 @@
+ system_ss.add(files('intc.c'))
++system_ss.add(when: 'CONFIG_DM32_PIC', if_true: files('dm32_pic.c'))
+ system_ss.add(when: 'CONFIG_ARM_GIC', if_true: files(
+   'arm_gic.c',
+   'arm_gic_common.c',

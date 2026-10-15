@@ -1,0 +1,38 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
+config SMARTL
+    bool
+    default y
+    depends on CSKY
+    select CSKY_TCIP_V1
+    select CSKY_UART
+    select DEVICE_TREE
+
+config DM32
+    bool
+    default y
+    depends on CSKY
+    select CSKY_TCIP_V1
+    select CSKY_UART
+    select DEVICE_TREE
+    select UNIMP
+    select DM32_ADC
+    select DM32_CACHE
+    select DM32_CODEC
+    select DM32_DAC
+    select DM32_DMRRAM
+    select DM32_FD6818
+    select DM32_GPIO
+    select DM32_I2C
+    select DM32_LCD
+    select DM32_PIC
+    select DM32_PWM
+    select DM32_RDA5807M
+    select DM32_SSI
+    select DM32_SPI_SLAVE
+    select DM32_SYSREG
+    select DM32_TIMER
+    select DM32_WDT
+    # the bit-banged I2C buses on GPIOA
+    select BITBANG_I2C
+    # an I2C EEPROM for the bus tests in tests/qtest/test_gpio_i2c.py
+    imply AT24C
